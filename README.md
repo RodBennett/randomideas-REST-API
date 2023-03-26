@@ -13,7 +13,7 @@ App written to practice Expressjs, REST API, routing, testing routes in Postman,
 - dotenv npm package
 
 ## Credits
-Written as final project of Travesy Media's Modern JS course, 2023.
+Written as final project of [Travesy Media's](https://www.traversymedia.com/) Modern JS course, 2023.
 
 ## Installation
 Deployment: TBD
