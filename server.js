@@ -1,3 +1,4 @@
+const path = require("path");
 const express = require("express");
 require("dotenv").config();
 
@@ -8,6 +9,9 @@ connectDB();
 
 
 const app = express();
+
+// static folder to be read by browser (HTML, CSS) // __dirname points to the root folder of this computer, which goes all the way to randomideas-api, whic is the root of this project, which then joins with public folder in this project, which then loads those static files into the browser when app is deployed or opened in live server
+app.use(express.static(path.join(__dirname, "public")));
 
 // Body parser middleware
 app.use(express.json());
