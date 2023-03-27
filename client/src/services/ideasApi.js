@@ -3,7 +3,8 @@ import axios from "axios";
 // this class handles all api backend requests made from the client
     class IdeasApi {
         constructor() {
-            this._apiUrl = "http://localhost:5001/api/ideas"
+            // this._apiUrl = "http://localhost:5001/api/ideas"
+            this._apiUrl = "/api/ideas"
         }
 
         getIdeas() {
