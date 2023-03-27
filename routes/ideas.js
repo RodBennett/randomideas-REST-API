@@ -1,17 +1,19 @@
 const express = require("express");
 const router = express.Router();
-const Idea = require('../models/Idea')
+const Idea = require("../models/Idea");
 
 // create route to get ALL ideas
 router.get("/", async (req, res) => {
   try {
-    const ideas = await Idea.find()
-    res.json({ success: true, data: ideas })
+    const ideas = await Idea.find();
+    res.json({ success: true, data: ideas });
   } catch (error) {
-    res.status(500).json({ success: false, error: "Something went wrong in GET ALL request" })
-  };
+    res.status(500).json({
+      success: false,
+      error: "Something went wrong in GET ALL request",
+    });
+  }
 });
-
 
 // GET route for signle idea by id hard coded:
 // router.get("/:id", (req, res) => {
@@ -24,18 +26,17 @@ router.get("/", async (req, res) => {
 // });
 
 // GET ONE with mongoose
-router.get('/:id', async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const idea = await Idea.findById(req.params.id);
-    res.json({ success: true, data: idea })
+    res.json({ success: true, data: idea });
   } catch (error) {
-    res.status(500).json({ success: false, error: "FindById not working" })
+    res.status(500).json({ success: false, error: "FindById not working" });
   }
-})
+});
 
 // create route for adding new idea
 router.post("/", async (req, res) => {
-
   // construct an idea
   const idea = new Idea({
     // id: ideas.length + 1, // autoincrements the ideas
@@ -43,13 +44,12 @@ router.post("/", async (req, res) => {
     tag: req.body.tag,
     username: req.body.username,
     // date: new Date().toISOString().slice(0, 10)
-
   });
   try {
     const savedIdea = await idea.save();
-    res.json({ success: true, data: savedIdea })
+    res.json({ success: true, data: savedIdea });
   } catch (error) {
-    res.status(500).json({ success: false, error: "POST ROUTE not " })
+    res.status(500).json({ success: false, error: "POST ROUTE not " });
   }
 });
 
@@ -71,24 +71,28 @@ router.post("/", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
   try {
-    const updateIdea = await Idea.findByIdAndUpdate(
-      req.params.id,
-      {
-        $set: {
-          text: req.body.text,
-          tag: req.body.tag
-        }
-      },
-      { new: true },
-    )
-    res.json({ success: true, data: updateIdea })
-
+    const idea = await Idea.findById(req.params.id);
+    // validate the username
+    if (idea.username === req.body.username) {
+      const updateIdea = await Idea.findByIdAndUpdate(
+        req.params.id,
+        {
+          $set: {
+            text: req.body.text,
+            tag: req.body.tag,
+          },
+        },
+        { new: true }
+      );
+      return res.json({ success: true, data: updateIdea });
+    }
+    res
+      .status(403)
+      .json({ succes: false, error: "You are not authorized to edit this" });
   } catch (error) {
-    res.status(500).json({ success: false, error: "PUT request didn't work" })
+    res.status(500).json({ success: false, error: "PUT request didn't work" });
   }
-
 });
-
 
 // DELETE hard coded
 // router.delete("/:id", (req, res) => {
@@ -107,10 +111,21 @@ router.put("/:id", async (req, res) => {
 //DELETE with mongoose
 router.delete("/:id", async (req, res) => {
   try {
-    await Idea.findByIdAndDelete(req.params.id);
-    res.json({ success: true, data: {} })
+    const idea = await Idea.findById(req.params.id);
+
+    // match the username (simple validation)
+    if (idea.username === req.body.username) {
+      await Idea.findByIdAndDelete(req.params.id);
+      return res.json({ success: true, data: {} });
+    }
+
+    // usernames do not match
+    res.status(403).json({
+      success: false,
+      error: "You are jot authorized to delete this resource",
+    });
   } catch (error) {
-    res.status(500).json({ success: false, error: "Delete unsuccessful"})
+    res.status(500).json({ success: false, error: "Delete unsuccessful" });
   }
 });
 

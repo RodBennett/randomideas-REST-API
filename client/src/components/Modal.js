@@ -8,6 +8,9 @@ class Modal {
   addEventListeners() {
     this._modalBtn.addEventListener("click", this.open.bind(this));
     window.addEventListener("click", this.outsideClick.bind(this));
+
+    // "closemodal" event was created in IdeaForm.js handleSubmit()
+    document.addEventListener("closemodal", () => this.close())
   }
 
   open() {

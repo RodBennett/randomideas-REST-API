@@ -1,12 +1,12 @@
 const path = require("path");
 const express = require("express");
+const cors = require("cors");
 require("dotenv").config();
 
 const port = process.env.PORT || 5000;
-const connectDB = require("./config/db")
+const connectDB = require("./config/db");
 
 connectDB();
-
 
 const app = express();
 
@@ -15,22 +15,27 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Body parser middleware
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }))
+app.use(express.urlencoded({ extended: false }));
 
-
+// cors middleware
+app.use(
+  cors({
+    origin: ["http://localhost:5001", "http://localhost:3000"],
+    credentials: true,
+  })
+);
 
 // create basic get route
 app.get("/", (req, res) => {
-  res.json({ message: "Welcome to Random Ideas!" })
+  res.json({ message: "Welcome to Random Ideas!" });
 });
 
-const ideasRouter = require("./routes/ideas")
+const ideasRouter = require("./routes/ideas");
 
 // app.use is used for middleware
-app.use("/api/ideas", ideasRouter)
-
+app.use("/api/ideas", ideasRouter);
 
 // create server
 app.listen(port, "localhost", () => {
-  console.log(`Server listening on port ${port}`)
+  console.log(`Server listening on port ${port}`);
 });
